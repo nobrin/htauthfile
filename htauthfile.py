@@ -20,6 +20,7 @@ __version__ = "0.1.0"
 __license__ = "MIT License"
 
 import re, random, string
+import hashlib, base64
 from collections import OrderedDict
 
 class Basic(object):
@@ -70,7 +71,12 @@ class Basic(object):
         # Add user
         if username in self.user:
             raise ValueError("User %s is already in DB." % username)
-        self.user[username] = getattr(self, "generate_%s" % typename)(password)
+        self.user[username] = {"digest": getattr(self, "generate_%s" % typename)(password)}
+
+    def delete(self, username):
+        # Delete user
+        if username in self.user:
+            del self.user[username]
 
     def get_digest_type(self, digest):
         # Get digest type
